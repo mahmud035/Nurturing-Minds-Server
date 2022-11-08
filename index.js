@@ -61,6 +61,13 @@ app.get('/services/:id', async (req, res) => {
   res.send(service);
 });
 
+//* POST (CREATE)
+app.post('/service', async (req, res) => {
+  const service = req.body;
+  const result = await servicesCollection.insertOne(service);
+  res.send(result);
+});
+
 app.listen(port, () => {
   console.log('Server up and running'.cyan.bold);
 });
