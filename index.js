@@ -63,11 +63,11 @@ app.get('/', (req, res) => {
 app.get('/few-service', async (req, res) => {
   const query = {};
   const cursor = servicesCollection.find(query);
-  const result = await cursor.limit(3).toArray();
+  const result = await cursor.sort({ _id: -1 }).limit(3).toArray();
   res.send(result);
 });
 
-//* GET (READ)
+//* GET (READ) (get all services)
 app.get('/services', async (req, res) => {
   const query = {};
   const cursor = servicesCollection.find(query);
@@ -88,7 +88,7 @@ app.get('/reviews/:id', async (req, res) => {
   const id = req.params.id;
   const query = { serviceId: id };
   const cursor = reviewsCollection.find(query);
-  const review = await cursor.toArray();
+  const review = await cursor.sort({ _id: -1 }).toArray();
   res.send(review);
 });
 
