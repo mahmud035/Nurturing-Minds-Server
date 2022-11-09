@@ -61,13 +61,28 @@ app.get('/services/:id', async (req, res) => {
   res.send(service);
 });
 
-//* GET (READ)
+//* GET (READ) (get specific service reviews)
 app.get('/reviews/:id', async (req, res) => {
   const id = req.params.id;
   const query = { serviceId: id };
   const cursor = reviewsCollection.find(query);
   const review = await cursor.toArray();
   res.send(review);
+});
+
+//* GET (READ) (get specific user reviews)
+app.get('/reviews', async (req, res) => {
+  let query = {};
+
+  if (req.query.email) {
+    query = {
+      userEmail: req.query.email,
+    };
+  }
+
+  const cursor = reviewsCollection.find(query);
+  const reviews = await cursor.toArray();
+  res.send(reviews);
 });
 
 //* POST (CREATE)
