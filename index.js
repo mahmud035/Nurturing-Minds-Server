@@ -12,7 +12,6 @@ app.use(cors());
 app.use(express.json());
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.yeflywl.mongodb.net/?retryWrites=true&w=majority`;
-console.log(uri);
 
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
@@ -62,6 +61,15 @@ app.get('/services/:id', async (req, res) => {
   res.send(service);
 });
 
+//* GET (READ)
+app.get('/reviews/:id', async (req, res) => {
+  const id = req.params.id;
+  const query = { serviceId: id };
+  const cursor = reviewsCollection.find(query);
+  const review = await cursor.toArray();
+  res.send(review);
+});
+
 //* POST (CREATE)
 app.post('/service', async (req, res) => {
   const service = req.body;
@@ -73,7 +81,6 @@ app.post('/service', async (req, res) => {
 app.post('/review', async (req, res) => {
   const review = req.body;
   const result = await reviewsCollection.insertOne(review);
-  console.log(result);
   res.send(result);
 });
 
