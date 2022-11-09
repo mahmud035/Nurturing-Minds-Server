@@ -21,6 +21,25 @@ const client = new MongoClient(uri, {
   serverApi: ServerApiVersion.v1,
 });
 
+const verifyJWT = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader) {
+    return res.status(401).send({ message: 'Unauthorized Access' });
+  }
+
+  try {
+    const token = authHeader.split(' ')[1];
+    const user = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    // console.log(user);
+    req.user = user;
+
+    next();
+  } catch (error) {
+    res.status(403).send({ message: 'Forbidden Access' });
+  }
+};
+
 const dbConnect = async () => {
   try {
     await client.connect();
@@ -74,9 +93,15 @@ app.get('/reviews/:id', async (req, res) => {
 });
 
 //* GET (READ) (get specific user reviews)
-app.get('/reviews', async (req, res) => {
-  let query = {};
+app.get('/reviews', verifyJWT, async (req, res) => {
+  const user = req.user;
+  // console.log(user);
 
+  if (user.email !== req.query.email) {
+    return res.status(403).send({ message: 'Forbidden Access' });
+  }
+
+  let query = {};
   if (req.query.email) {
     query = {
       userEmail: req.query.email,
