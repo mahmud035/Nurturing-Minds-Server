@@ -114,7 +114,7 @@ app.get('/reviews', verifyJWT, async (req, res) => {
 });
 
 //* GET (READ) (get a specific review to edit)
-app.get('/edit-review/:id', async (req, res) => {
+app.get('/edit/:id', async (req, res) => {
   const id = req.params.id;
   const query = { _id: ObjectId(id) };
   const review = await reviewsCollection.findOne(query);
