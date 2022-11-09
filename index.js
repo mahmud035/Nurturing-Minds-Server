@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
 require('colors');
 require('dotenv').config();
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
@@ -11,6 +12,7 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
+//* Mongodb Atlas
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.yeflywl.mongodb.net/?retryWrites=true&w=majority`;
 
 const client = new MongoClient(uri, {
@@ -30,6 +32,7 @@ const dbConnect = async () => {
 
 dbConnect();
 
+//* Collection
 const servicesCollection = client.db('nurturingMindsDB').collection('services');
 const reviewsCollection = client.db('nurturingMindsDB').collection('reviews');
 
@@ -83,6 +86,17 @@ app.get('/reviews', async (req, res) => {
   const cursor = reviewsCollection.find(query);
   const reviews = await cursor.toArray();
   res.send(reviews);
+});
+
+//* POST [For => JWT Token]
+app.post('/jwt', async (req, res) => {
+  try {
+    const user = req.body;
+    const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
+    res.send({ token });
+  } catch (error) {
+    console.log(error.message.bold);
+  }
 });
 
 //* POST (CREATE)
