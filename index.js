@@ -32,6 +32,7 @@ const dbConnect = async () => {
 dbConnect();
 
 const servicesCollection = client.db('nurturingMindsDB').collection('services');
+const reviewsCollection = client.db('nurturingMindsDB').collection('reviews');
 
 app.get('/', (req, res) => {
   res.send('Nurturing Minds Server Running');
@@ -65,6 +66,14 @@ app.get('/services/:id', async (req, res) => {
 app.post('/service', async (req, res) => {
   const service = req.body;
   const result = await servicesCollection.insertOne(service);
+  res.send(result);
+});
+
+//* POST (CREATE)
+app.post('/review', async (req, res) => {
+  const review = req.body;
+  const result = await reviewsCollection.insertOne(review);
+  console.log(result);
   res.send(result);
 });
 
