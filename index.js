@@ -113,6 +113,14 @@ app.get('/reviews', verifyJWT, async (req, res) => {
   res.send(reviews);
 });
 
+//* GET (READ) (get a specific review to edit)
+app.get('/edit-review/:id', async (req, res) => {
+  const id = req.params.id;
+  const query = { _id: ObjectId(id) };
+  const review = await reviewsCollection.findOne(query);
+  res.send(review);
+});
+
 //* POST [For => JWT Token]
 app.post('/jwt', async (req, res) => {
   try {
@@ -135,6 +143,26 @@ app.post('/service', async (req, res) => {
 app.post('/review', async (req, res) => {
   const review = req.body;
   const result = await reviewsCollection.insertOne(review);
+  res.send(result);
+});
+
+//* PUT (UPDATE) (update a specific review)
+app.put('/reviews/:id', async (req, res) => {
+  const id = req.params.id;
+  const filter = { _id: ObjectId(id) };
+  const review = req.body;
+  // console.log(review);
+  const option = { upsert: true };
+  const updatedReview = {
+    $set: {
+      description: review.description,
+    },
+  };
+  const result = await reviewsCollection.updateOne(
+    filter,
+    updatedReview,
+    option
+  );
   res.send(result);
 });
 
